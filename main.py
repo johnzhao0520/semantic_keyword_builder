@@ -293,6 +293,13 @@ if __name__ == "__main__":
     import sys
     from streamlit.web import cli as stcli
 
+    # Prevent infinite recursion if we spawned this process
+    if os.environ.get("STREAMLIT_SPAWNED"):
+        sys.exit(0)
+
+    # Set flag for the child process
+    os.environ["STREAMLIT_SPAWNED"] = "true"
+
     try:
         # If run via 'python main.py', this starts the Streamlit server.
         # If run via 'streamlit run main.py', the runtime already exists,
