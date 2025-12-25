@@ -293,6 +293,13 @@ if __name__ == "__main__":
     import sys
     from streamlit.web import cli as stcli
 
-    if "streamlit" not in sys.argv[0]:
+    try:
+        # If run via 'python main.py', this starts the Streamlit server.
+        # If run via 'streamlit run main.py', the runtime already exists,
+        # so this will raise a RuntimeError, which we catch and ignore.
         sys.argv = ["streamlit", "run", __file__, "--server.port=8080", "--server.address=0.0.0.0"]
         sys.exit(stcli.main())
+    except RuntimeError as e:
+        # If we are already running inside Streamlit, we just continue.
+        if "Runtime instance already exists" not in str(e):
+            raise e
